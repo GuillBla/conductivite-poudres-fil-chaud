@@ -211,6 +211,10 @@ def cmd_design(a):
           f"surface +{ss['surface']:.1f} K")
     if s.t_ambient + ss["wire"] > 150:
         print("  /!\\ le fil dépasserait 150 °C en régime permanent : réduire la puissance ou la durée.")
+    el = model.wire_electrical(s)
+    print(f"Fil {el['material']} Ø{2e3 * s.wire_radius:.2f} mm : {el['ohm_per_m']:.0f} Ω/m, "
+          f"R = {el['resistance']:.2f} Ω sur {s.length * 1e3:.0f} mm -> "
+          f"U = {el['voltage']:.2f} V, I = {el['current']:.3f} A pour {s.power} W")
     p_rec = 4 * np.pi * s.k_powder * 1.0  # pente de 1 K par unité de ln(t)
     print(f"Puissance linéique donnant une pente de ~1 K/ln(t) au fil : {p_rec:.1f} W/m "
           f"(soit P ≈ {p_rec * s.length:.2f} W)\n")

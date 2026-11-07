@@ -28,6 +28,14 @@ from scipy.special import exp1
 
 EULER_GAMMA = 0.5772156649015329
 
+# Alliages de fil chauffant (valeurs à 20 °C, fiches fabricants).
+# resistivity en Ω·m, rhocp = masse volumique × capacité thermique en J/m³/K.
+WIRE_MATERIALS = {
+    "kanthal_a1": {"label": "Kanthal A1 (FeCrAl)", "resistivity": 1.45e-6, "rhocp": 7100 * 460, "t_max": 1400},
+    "nichrome": {"label": "Nichrome 80/20 (NiCr)", "resistivity": 1.09e-6, "rhocp": 8300 * 460, "t_max": 1200},
+    "constantan": {"label": "Constantan (CuNi)", "resistivity": 0.49e-6, "rhocp": 8900 * 390, "t_max": 600},
+}
+
 
 @dataclass
 class Setup:
@@ -44,7 +52,8 @@ class Setup:
     rhocp_powder: float = 1.2e6
     k_tube: float = 0.19              # PVC par défaut
     rhocp_tube: float = 1.9e6
-    rhocp_wire: float = 3.8e6         # nichrome / constantan
+    wire_material: str = "kanthal_a1"  # clé de WIRE_MATERIALS (sert au dimensionnement électrique)
+    rhocp_wire: float = 3.27e6        # Kanthal A1 : 7100 kg/m³ × 460 J/kg/K
 
     # --- Conditions ------------------------------------------------------
     power: float = 3.77               # puissance électrique dans le fil (W)
@@ -246,6 +255,27 @@ def simulate(
         grid=g,
         profiles=None if profiles is None else profiles + amb,
     )
+
+
+def wire_electrical(s: Setup) -> dict:
+    """Résistance du fil chauffé et tension/courant nécessaires pour ``s.power``."""
+    mat = WIRE_MATERIALS[s.wire_material]
+    resistance = mat["resistivity"] * s.length / (np.pi * s.wire_radius**2)
+    current = np.sqrt(s.power / resistance)
+    return {
+        "material": mat["label"],
+        "ohm_per_m": mat["resistivity"] / (np.pi * s.wire_radius**2),
+        "resistance": resistance,
+        "current": current,
+        "voltage": current * resistance,
+    }
+
+
+def wire_diameter_from_measurement(voltage: float, current: float, length: float, material: str = "kanthal_a1") -> float:
+    """Diamètre de fil (m) cohérent avec U, I mesurés aux bornes d'une longueur ``length``."""
+    rho = WIRE_MATERIALS[material]["resistivity"]
+    area = rho * length * current / voltage
+    return 2 * np.sqrt(area / np.pi)
 
 
 def steady_state(s: Setup) -> dict:

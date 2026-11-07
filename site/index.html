@@ -94,7 +94,7 @@
       <div class="prose">
         <h3>3. Une fenêtre de temps bornée des deux côtés</h3>
         <ul>
-          <li><b>Trop tôt</b> : le fil a un rayon et une capacité thermique. Avec un fil de Ø 0,5 mm, l'erreur reste à −5 % entre 10 et 100 s. Avec Ø 0,1 mm, elle tombe sous 1 % dès 5 s.</li>
+          <li><b>Trop tôt</b> : le fil a un rayon et une capacité thermique. Avec un fil de Ø 0,5 mm, l'erreur reste à −4 % entre 10 et 100 s. Avec Ø 0,1 mm, elle tombe sous 1 % dès 5 s.</li>
           <li><b>Trop tard</b> : la chaleur atteint la paroi au bout de $R^2/4\alpha$ environ, et la poudre n'est plus « infinie ». La pente augmente et $k$ est sous-estimé de 20 % ou plus.</li>
         </ul>
         <figure class="panel">
@@ -306,7 +306,7 @@
       <div class="rule-group">
         <h3>Concevoir</h3>
         <div class="rule"><span class="n">01</span><div><b>Mesurer sur le fil</b><p>Collez la sonde (thermocouple fin ou PT100 film) à mi-hauteur du fil. Sur la paroi du tube, $k$ n'est pas mesurable.</p></div></div>
-        <div class="rule"><span class="n">02</span><div><b>Un fil fin</b><p>Ø 0,1 mm ou moins. Avec un fil plus gros, sa capacité thermique fausse les premières dizaines de secondes.</p></div></div>
+        <div class="rule"><span class="n">02</span><div><b>Un fil fin</b><p>Kanthal A1 Ø 0,1 mm ou moins. Avec un fil plus gros, sa capacité thermique fausse les premières dizaines de secondes. Le Kanthal garde une résistance stable en chauffant : la puissance reste constante.</p></div></div>
         <div class="rule"><span class="n">03</span><div><b>Un tube large et long</b><p>Rayon assez grand pour que la chaleur n'atteigne pas la paroi pendant l'essai ($R^2/4\alpha$ au-delà de la durée), et longueur d'au moins 4 diamètres.</p></div></div>
         <div class="rule"><span class="n">04</span><div><b>Une puissance modérée</b><p>Visez une pente de 1 à 2 K par unité de ln t, soit $q \approx 4\pi k$ à $8\pi k$. La v1 envoyait 92 W/m : plusieurs centaines de degrés au fil.</p></div></div>
         <div class="rule"><span class="n">05</span><div><b>Une électronique précise</b><p>MAX31865 (≈ 0,03 °C) ou pont 1 kΩ avec la référence 1,1 V. La résolution doit être petite devant l'échauffement.</p></div></div>
@@ -344,13 +344,13 @@
         <div class="table-scroll">
           <table class="data text">
             <tbody>
-              <tr><td>Carte</td><td >Arduino Uno ou Nano</td></tr>
-              <tr><td>Sonde</td><td >PT100 film 3 fils, ou thermocouple K Ø 0,08 mm</td></tr>
-              <tr><td>Convertisseur</td><td >MAX31865 (PT100) ou MAX31856 (thermocouple)</td></tr>
-              <tr><td>Fil chauffant</td><td >nichrome Ø 0,1 mm, 200 mm (≈ 28 Ω)</td></tr>
-              <tr><td>Commutation</td><td >MOSFET logic level (IRLZ44N), 220 Ω + 10 kΩ</td></tr>
-              <tr><td>Alimentation</td><td >laboratoire, stabilisée (≈ 0,17 A sous 4,7 V pour 0,8 W)</td></tr>
-              <tr><td>Tube</td><td >PVC ou verre, Ø int. ≥ 50 mm, longueur ≥ 200 mm</td></tr>
+              <tr><td>Carte</td><td>Arduino Uno ou Nano</td></tr>
+              <tr><td>Sonde</td><td>PT100 film 3 fils, ou thermocouple K Ø 0,08 mm</td></tr>
+              <tr><td>Convertisseur</td><td>MAX31865 (PT100) ou MAX31856 (thermocouple)</td></tr>
+              <tr><td>Fil chauffant</td><td>Kanthal A1 (FeCrAl) Ø 0,1 mm, 200 mm (≈ 37 Ω), comme en v1</td></tr>
+              <tr><td>Commutation</td><td>MOSFET logic level (IRLZ44N), 220 Ω + 10 kΩ</td></tr>
+              <tr><td>Alimentation</td><td>laboratoire, stabilisée (≈ 0,15 A sous 5,4 V pour 0,8 W)</td></tr>
+              <tr><td>Tube</td><td>PVC ou verre, Ø int. ≥ 50 mm, longueur ≥ 200 mm</td></tr>
             </tbody>
           </table>
         </div>

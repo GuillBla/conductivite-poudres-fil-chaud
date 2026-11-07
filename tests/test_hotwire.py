@@ -119,3 +119,12 @@ def test_load_legacy_data():
     m = analysis.load_measurement("data/essai_2.csv", conversion="legacy")
     assert m.metadata["power"] == "3.77"
     assert m.temperature[0] == pytest.approx(18.67007673, abs=1e-6)  # valeur du tableur
+
+
+def test_kanthal_wire_electrical():
+    s = model.Setup(wire_radius=0.05e-3, length=0.2, power=0.8, wire_material="kanthal_a1")
+    el = model.wire_electrical(s)
+    assert el["ohm_per_m"] == pytest.approx(184.6, rel=1e-3)
+    assert el["voltage"] * el["current"] == pytest.approx(0.8)
+    d = model.wire_diameter_from_measurement(el["voltage"], el["current"], 0.2)
+    assert d == pytest.approx(0.1e-3)

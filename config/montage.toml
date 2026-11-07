@@ -17,7 +17,11 @@ k_tube     = 0.19          # W/m/K  (PVC ; verre ≈ 1.0 ; aluminium ≈ 200)   
 rhocp_tube = 1.9e6         # J/m³/K
 
 [fil]
-rhocp_wire = 3.8e6         # J/m³/K (nichrome / constantan)
+wire_material = "kanthal_a1" # Kanthal A1 (FeCrAl), utilisé pour la v1
+rhocp_wire = 3.27e6        # J/m³/K (7100 kg/m³ × 460 J/kg/K)
+# Diamètre réel inconnu. U = 2,6 V et I = 1,45 A sur 41 mm de Kanthal donneraient
+# Ø ≈ 0,2 mm (si la tension était mesurée aux bornes du fil seul) : voir
+# hotwire.model.wire_diameter_from_measurement.
 
 [conditions]
 power     = 3.77           # W (U = 2.6 V, I = 1.45 A dans le tableur)

@@ -2,7 +2,7 @@
 # capteur au contact du fil, puissance modérée, essai court échantillonné à 1 Hz.
 
 [geometrie]
-wire_radius    = 0.05e-3   # fil Ø 0,1 mm (nichrome ou constantan)
+wire_radius    = 0.05e-3   # fil Ø 0,1 mm (Kanthal A1 ou nichrome)
 powder_radius  = 25e-3     # tube Ø intérieur 50 mm
 tube_thickness = 2e-3
 length         = 0.20      # 200 mm de fil dans la poudre (L/D = 4)
@@ -16,10 +16,12 @@ k_tube     = 0.19          # PVC
 rhocp_tube = 1.9e6
 
 [fil]
-rhocp_wire = 3.8e6
+wire_material = "kanthal_a1"  # 185 Ω/m en Ø 0,1 mm -> 37 Ω pour 200 mm
+rhocp_wire = 3.27e6
 
 [conditions]
 power     = 0.8            # W -> q = 4 W/m, pente ≈ 1,6 K par unité de ln(t) si k = 0,2
+                           # soit ≈ 5,4 V et 0,15 A avec 200 mm de Kanthal A1 Ø 0,1 mm
 h_ext     = 10.0
 t_ambient = 20.0
 

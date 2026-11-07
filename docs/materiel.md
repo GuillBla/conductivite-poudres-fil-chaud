@@ -7,7 +7,7 @@
 | Carte | Arduino Uno / Nano | acquisition, pilotage de la chauffe |
 | Capteur | PT100 3 fils, petit format (film mince 2×5 mm) ou thermocouple type K Ø 0,08–0,13 mm | température au contact du fil |
 | Convertisseur | module **MAX31865** (PT100, R_ref = 430 Ω), ou MAX31856 pour un thermocouple | conversion précise de la mesure (15–19 bits) |
-| Fil chauffant | nichrome (NiCr 80/20) ou constantan, **Ø 0,1 mm**, 200 mm tendu au centre du tube | source de chaleur |
+| Fil chauffant | **Kanthal A1** (déjà utilisé en v1) ou nichrome, **Ø 0,1 mm**, 200 mm tendu au centre du tube | source de chaleur |
 | Alimentation de chauffe | alimentation de laboratoire réglable, stabilisée | puissance constante |
 | Commutation | MOSFET canal N « logic level » (ex. IRLZ44N) + résistance de grille 220 Ω + résistance de rappel 10 kΩ | mise en chauffe pilotée par l'Arduino, avec un instant $t = 0$ connu |
 | Mesure de puissance | multimètre en ampèremètre + voltmètre aux bornes du **fil seul** (montage 4 fils) | connaître $q = UI/L$ |
@@ -15,9 +15,29 @@
 
 ### Dimensionner la chauffe
 
-Le nichrome Ø 0,1 mm fait environ 140 Ω/m, soit 28 Ω pour 200 mm. Pour
-0,8 W, il faut $I = \sqrt{P/R} \approx 0{,}17$ A sous environ 4,7 V. Une
+Le Kanthal A1 Ø 0,1 mm fait environ 185 Ω/m, soit 37 Ω pour 200 mm. Pour
+0,8 W, il faut $I = \sqrt{P/R} \approx 0{,}15$ A sous environ 5,4 V. Une
 alimentation de laboratoire convient ; une sortie de l'Arduino, non.
+`python -m hotwire design` fait ce calcul pour votre montage (clé
+`wire_material` du fichier TOML).
+
+| alliage | résistivité (µΩ·m) | Ø 0,1 mm (Ω/m) | ρc (MJ/m³/K) | T max (°C) |
+|---|---|---|---|---|
+| **Kanthal A1** (FeCrAl) | 1,45 | 185 | 3,3 | 1400 |
+| Nichrome 80/20 (NiCr) | 1,09 | 139 | 3,8 | 1200 |
+| Constantan (CuNi) | 0,49 | 62 | 3,5 | 600 |
+
+Le Kanthal convient très bien. Sa résistance varie peu avec la température
+(quelques ‰ sur 100 K), donc la puissance reste constante pendant l'essai.
+Pour la même raison, il ne peut pas servir de thermomètre : la température
+doit être lue par une sonde séparée, collée sur le fil. Le Kanthal se soude
+mal à l'étain ; utilisez des bornes à vis ou des cosses serties pour les
+connexions.
+
+> Pour la v1, U = 2,6 V et I = 1,45 A sur 41 mm de Kanthal correspondent à
+> un fil d'environ Ø 0,2 mm, si la tension était mesurée aux bornes du fil
+> seul (`hotwire.model.wire_diameter_from_measurement`). Le diamètre retenu
+> dans `config/montage.toml` (Ø 0,5 mm) reste à vérifier.
 
 Ordre de grandeur de la puissance : la pente au fil vaut $q/(4\pi k)$. On vise
 1 à 2 K par unité de $\ln t$, ce qui donne quelques kelvins d'échauffement

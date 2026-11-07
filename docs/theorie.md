@@ -53,7 +53,7 @@ La fenêtre de temps exploitable est bornée des deux côtés :
 * **Aux temps courts**, le fil n'est pas infiniment fin : son rayon $r_w$ et
   sa capacité thermique décalent la courbe tant que $t$ n'est pas grand
   devant $r_w^2/\alpha$, multiplié par le rapport des capacités thermiques.
-  Avec un fil de Ø 0,5 mm, l'erreur est encore de 5 % à 10–100 s. Avec
+  Avec un fil de Ø 0,5 mm, l'erreur est encore de 4 % à 10–100 s. Avec
   Ø 0,1 mm, elle tombe sous 1 % dès 5 s.
 * **Aux temps longs**, la chaleur atteint la paroi du tube (temps
   caractéristique $R^2/4\alpha$, soit 5 min pour un tube de Ø 29 mm). À partir

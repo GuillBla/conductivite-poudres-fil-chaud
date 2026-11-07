@@ -24,7 +24,7 @@ Cette version 2 apporte :
 | 🤖 **Arduino virtuel** | produit exactement les mêmes trames que le firmware, avec quantification et bruit du capteur : toute la chaîne se teste **sans matériel** |
 | 📈 **Analyse** | trois méthodes (pente en ln t, ajustement E1, problème inverse sur le modèle complet), avec incertitudes |
 | 🔌 **Firmware v2** | MAX31865 ou pont diviseur amélioré, commande de la chauffe, sécurités, échantillonnage sans dérive |
-| ✅ **Tests** | 15 tests automatiques (`pytest`) |
+| ✅ **Tests** | 16 tests Python (`pytest`) et 7 tests JavaScript (`node --test tests/js/`) |
 
 ## Démarrage rapide
 
