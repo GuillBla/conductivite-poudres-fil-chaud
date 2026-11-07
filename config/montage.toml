@@ -1,0 +1,29 @@
+# Description du montage expérimental (unités SI, températures en °C).
+# Les valeurs marquées « à vérifier » ont été déduites du tableur Protech.ods
+# ou choisies comme ordres de grandeur réalistes : mesurez votre montage !
+
+[geometrie]
+wire_radius    = 0.25e-3   # rayon du fil chauffant (m)                       — à vérifier
+powder_radius  = 14.5e-3   # rayon intérieur du tube (m) (« Epaisseur » du tableur)
+tube_thickness = 1.5e-3    # épaisseur de paroi du tube (m)                   — à vérifier
+length         = 0.041     # hauteur de poudre chauffée (m) (tableur)
+
+[poudre]
+k_powder     = 0.20        # W/m/K   (valeur supposée pour la simulation)
+rhocp_powder = 1.2e6       # J/m³/K  (masse volumique apparente × capacité thermique)
+
+[tube]
+k_tube     = 0.19          # W/m/K  (PVC ; verre ≈ 1.0 ; aluminium ≈ 200)     — à vérifier
+rhocp_tube = 1.9e6         # J/m³/K
+
+[fil]
+rhocp_wire = 3.8e6         # J/m³/K (nichrome / constantan)
+
+[conditions]
+power     = 3.77           # W (U = 2.6 V, I = 1.45 A dans le tableur)
+h_ext     = 10.0           # W/m²/K, convection naturelle dans l'air ≈ 5–15
+t_ambient = 20.0           # °C
+
+[capteur]
+sensor = "outer"           # "outer" = PT100 collée sur la paroi extérieure, "wire" = sur le fil,
+                           # ou un rayon en mètres, ex. 0.003

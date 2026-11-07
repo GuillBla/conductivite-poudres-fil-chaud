@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fil chaud Protech</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Mesure de la conductivité thermique des poudres par la méthode du fil chaud : méthode, simulateur interactif, analyse de vos mesures et réanalyse des essais Protech.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]], displayMath: [["$$", "$$"]] },
+    svg: { fontCache: "global" },
+    options: { skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code", "svg"] },
+  };
+</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+</head>
+<body>
+
+<header class="site-header gutter">
+  <div class="container">
+    <a class="brand" href="#top" aria-label="Fil chaud Protech, haut de page">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+        <circle cx="13" cy="13" r="11.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="13" cy="13" r="7" fill="var(--heat-1)" opacity="0.25"/>
+        <circle cx="13" cy="13" r="2.5" fill="var(--heat-1)"/>
+      </svg>
+      <span>Fil chaud Protech</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#methode">Méthode</a>
+      <a href="#simulateur">Simulateur</a>
+      <a href="#analyse">Analyser une mesure</a>
+      <a href="#resultats">Essais v1</a>
+      <a href="#retenir">À retenir</a>
+      <a href="#materiel">Matériel</a>
+    </nav>
+    <a class="gh" href="https://github.com/GuillBla/Protech-Conductivit-thermique-des-poudres">Code source ↗</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ================================================================ HERO -->
+<section class="hero gutter">
+  <div class="container">
+    <div>
+      <p class="eyebrow">Projet Protech · méthode du fil chaud</p>
+      <h1>Conductivité thermique des poudres</h1>
+      <p class="lede">Un fil chauffant au centre d'un tube de poudre, une sonde de température, une minute de calcul. Plus la poudre conduit la chaleur, plus la température du fil monte lentement : la pente de cette montée donne la conductivité.</p>
+      <div class="formula-card">
+        <div>$$k = \frac{q}{4\pi}\,\frac{1}{\mathrm{d}T/\mathrm{d}\ln t}$$</div>
+        <p class="legend">$k$ conductivité (W/m/K), $q = UI/L$ puissance par mètre de fil (W/m), pente de $T$ en fonction de $\ln t$ (K).</p>
+      </div>
+    </div>
+    <figure class="hero-figure">
+      <canvas id="hero-canvas" width="840" height="840" aria-label="Coupe du tube : la chaleur diffuse du fil vers la paroi"></canvas>
+      <figcaption class="caption" id="hero-caption">Coupe du tube, montage recommandé simulé : la chaleur part du fil et s'étale dans la poudre.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================================================================ MÉTHODE -->
+<section class="block gutter" id="methode">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">La méthode</p>
+      <h2>Pourquoi une droite en ln t donne la conductivité</h2>
+      <p>La méthode repose sur une solution exacte de l'équation de la chaleur. Elle n'est valable que dans une fenêtre de temps précise, et seulement si l'on mesure la température au bon endroit.</p>
+    </div>
+
+    <div class="cols">
+      <div class="prose">
+        <h3>1. La source linéique</h3>
+        <p>À partir de $t = 0$, le fil dissipe une puissance constante $P$ sur une longueur $L$, soit $q = P/L$ watts par mètre. Pour un fil infiniment fin dans une poudre infinie, l'échauffement à la distance $r$ du fil vaut (Carslaw & Jaeger) :</p>
+        <div class="math-block">$$\Delta T(r,t) = \frac{q}{4\pi k}\,E_1\!\left(\frac{r^2}{4\alpha t}\right)$$</div>
+        <p>où $\alpha = k/\rho c$ est la diffusivité de la poudre et $E_1$ la fonction intégrale exponentielle.</p>
+
+        <h3>2. Le régime logarithmique</h3>
+        <p>Dès que $t \gg r^2/4\alpha$, on peut écrire $E_1(x) \approx -\gamma - \ln x$, et l'échauffement devient linéaire en $\ln t$ :</p>
+        <div class="math-block">$$\Delta T \approx \frac{q}{4\pi k}\Big[\ln t + \ln\frac{4\alpha}{r^2} - \gamma\Big]$$</div>
+        <p>La pente $q/4\pi k$ ne dépend ni de $\rho c$, ni de la distance $r$, ni d'une éventuelle résistance de contact. C'est ce qui rend la méthode simple et robuste.</p>
+
+        <div class="callout bad">
+          <strong>Logarithme népérien, pas décimal</strong>
+          Si la pente est mesurée en fonction de $\log_{10} t$, il faut multiplier $k$ par $\ln 10 = 2{,}303$. Le tableur de la v1 a oublié ce facteur.
+        </div>
+      </div>
+
+      <div class="prose">
+        <h3>3. Une fenêtre de temps bornée des deux côtés</h3>
+        <ul>
+          <li><b>Trop tôt</b> : le fil a un rayon et une capacité thermique. Avec un fil de Ø 0,5 mm, l'erreur reste à −5 % entre 10 et 100 s. Avec Ø 0,1 mm, elle tombe sous 1 % dès 5 s.</li>
+          <li><b>Trop tard</b> : la chaleur atteint la paroi au bout de $R^2/4\alpha$ environ, et la poudre n'est plus « infinie ». La pente augmente et $k$ est sous-estimé de 20 % ou plus.</li>
+        </ul>
+        <figure class="panel">
+          <h3>Erreur de la méthode de la pente selon la fenêtre</h3>
+          <div id="chart-window"></div>
+          <figcaption class="caption">Simulation sans bruit, capteur sur le fil. Chaque point correspond à une fenêtre [t, 10 t]. Montage v1 : fil Ø 0,5 mm, tube Ø 29 mm. Montage recommandé : fil Ø 0,1 mm, tube Ø 50 mm.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top:48px">
+      <h3>4. Pourquoi la sonde doit toucher le fil</h3>
+      <p>L'approximation logarithmique n'est juste à 1 % près qu'après $t \approx 25\,r^2/\alpha$. Avec une poudre typique ($\alpha \approx 1{,}7\cdot10^{-7}$ m²/s), cela fait 0,4 s pour une sonde collée sur un fil de Ø 0,1 mm, 22 min à 3 mm du fil et 10 h sur la paroi du tube v1. Bien avant ce délai, la chaleur atteint la paroi et s'échappe dans l'air.</p>
+      <p>Les courbes ci-dessous montrent de combien la température lue change quand on double un paramètre. Sur le fil, elle dépend surtout de $k$. Sur la paroi, elle dépend surtout des pertes vers l'air ($h$) et de la capacité thermique.</p>
+    </div>
+    <div class="charts-2" style="margin-top:20px">
+      <figure class="panel"><h3>Capteur sur le fil</h3><div id="chart-sens-wire"></div></figure>
+      <figure class="panel"><h3>Capteur sur la paroi du tube</h3><div id="chart-sens-outer"></div></figure>
+    </div>
+    <p class="caption" style="margin-top:10px">Sensibilité réduite $p\,\partial T/\partial p$ en K, montage v1 (3,77 W sur 41 mm). En régime permanent, la température de paroi vaut $q/(2\pi R h)$ : elle ne dépend plus du tout de $k$.</p>
+
+    <div class="prose" style="margin-top:48px">
+      <h3>5. Trois façons d'exploiter une mesure</h3>
+    </div>
+    <div class="table-scroll" style="margin-top:12px">
+      <table class="data text">
+        <thead><tr><th>Méthode</th><th>Hypothèse</th><th>Ce qu'elle estime</th><th>Quand l'utiliser</th></tr></thead>
+        <tbody>
+          <tr><td><b>Pente</b></td><td>régime logarithmique, poudre infinie</td><td>$k$</td><td>capteur sur le fil, fenêtre bien choisie</td></tr>
+          <tr><td><b>Ajustement $E_1$</b></td><td>poudre infinie, capteur à distance $r$ connue</td><td>$k$, $\alpha$</td><td>capteur à quelques mm du fil, essai court</td></tr>
+          <tr><td><b>Modèle complet</b></td><td>fil + poudre + tube + air, en 1D radial</td><td>$k$, $\rho c$, $h$, $T_\text{air}$</td><td>tous les cas ; montre aussi les paramètres indissociables</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ SIMULATEUR -->
+<section class="block gutter" id="simulateur">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Simulateur</p>
+      <h2>Tester un montage avant de le construire</h2>
+      <p>Le modèle numérique complet tourne dans votre navigateur : fil, poudre, paroi du tube et échange avec l'air. Changez un paramètre, et la mesure simulée, la conductivité retrouvée et les alertes se mettent à jour.</p>
+    </div>
+
+    <div class="sim">
+      <form class="controls panel" id="sim-form" autocomplete="off">
+        <div class="presets" role="group" aria-label="Montages prédéfinis">
+          <button type="button" id="preset-rec" class="primary">Montage recommandé</button>
+          <button type="button" id="preset-v1">Montage v1</button>
+        </div>
+        <fieldset>
+          <legend>Poudre (à retrouver)</legend>
+          <div class="field"><label for="in-k">Conductivité k <output id="out-k"></output></label><input type="range" id="in-k" min="-1.7" max="0.5" step="0.01"></div>
+          <div class="field"><label for="in-rhocp">ρc <output id="out-rhocp"></output></label><input type="range" id="in-rhocp" min="0.4" max="3" step="0.05"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Montage</legend>
+          <div class="field"><label for="in-wire">Diamètre du fil <output id="out-wire"></output></label><input type="range" id="in-wire" min="0.05" max="1" step="0.05"></div>
+          <div class="field"><label for="in-tube">Diamètre intérieur du tube <output id="out-tube"></output></label><input type="range" id="in-tube" min="10" max="100" step="1"></div>
+          <div class="field"><label for="in-length">Longueur chauffée <output id="out-length"></output></label><input type="range" id="in-length" min="20" max="400" step="5"></div>
+          <div class="field"><label for="in-power">Puissance <output id="out-power"></output></label><input type="range" id="in-power" min="-1.5" max="0.7" step="0.01"></div>
+          <div class="field"><label for="in-h">Échange avec l'air h <output id="out-h"></output></label><input type="range" id="in-h" min="2" max="50" step="1"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Mesure</legend>
+          <div class="field">
+            <span class="caption" id="lbl-sensor">Position du capteur</span>
+            <div class="seg" role="group" aria-labelledby="lbl-sensor">
+              <button type="button" data-sensor="wire">Sur le fil</button>
+              <button type="button" data-sensor="outer">Sur la paroi</button>
+            </div>
+          </div>
+          <div class="field"><label for="in-fe">Chaîne de mesure</label>
+            <select id="in-fe">
+              <option value="max31865">MAX31865 (≈ 0,03 °C)</option>
+              <option value="legacy">Pont 10 kΩ de la v1 (≈ 26 °C)</option>
+              <option value="ideal">Capteur idéal, sans bruit</option>
+            </select>
+          </div>
+          <div class="field"><label for="in-duration">Durée de chauffe <output id="out-duration"></output></label><input type="range" id="in-duration" min="30" max="7200" step="30"></div>
+          <div class="form-row">
+            <div class="field"><label for="in-tmin">Fenêtre début (s)</label><input type="number" id="in-tmin" min="0.5" step="1"></div>
+            <div class="field"><label for="in-tmax">Fenêtre fin (s)</label><input type="number" id="in-tmax" min="1" step="1"></div>
+          </div>
+        </fieldset>
+      </form>
+
+      <div class="sim-out" aria-live="polite">
+        <div class="stats" id="sim-stats"></div>
+        <div class="chips" id="sim-chips"></div>
+        <div class="charts-2">
+          <figure class="panel"><h3>Température au cours du temps</h3><div id="chart-sim-lin"></div></figure>
+          <figure class="panel"><h3>Même mesure, temps en échelle log</h3><div id="chart-sim-log"></div></figure>
+        </div>
+        <figure class="panel">
+          <h3>Coupe du tube</h3>
+          <div class="xsec">
+            <canvas id="xsec-canvas" width="440" height="440" aria-label="Température dans la coupe du tube"></canvas>
+            <div style="display:grid;gap:12px;min-width:0">
+              <div class="scrub">
+                <button type="button" id="xsec-play" aria-label="Lecture">▶</button>
+                <input type="range" id="xsec-time" min="0" max="100" step="1" value="100" aria-label="Instant affiché">
+              </div>
+              <p class="caption" id="xsec-label"></p>
+              <div><div class="colorbar"></div><div class="colorbar-labels"><span id="cb-min"></span><span id="cb-max"></span></div></div>
+              <div id="chart-profile"></div>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ ANALYSE -->
+<section class="block gutter" id="analyse">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Analyser une mesure</p>
+      <h2>Déposer un CSV, lire la conductivité</h2>
+      <p>Le fichier est lu dans votre navigateur et n'est envoyé nulle part. Formats acceptés : ceux du firmware v2, de <code>python -m hotwire</code> et des essais v1 (colonnes <code>time_s</code> ou <code>time_ms</code>, <code>temperature_c</code> ou <code>resistance_ohm</code>, et <code>heater</code> en option).</p>
+    </div>
+    <div class="sim">
+      <div class="controls panel">
+        <div class="drop" id="drop">
+          <input type="file" id="file" accept=".csv,.txt,text/csv">
+          <p>Glissez un fichier ici ou <label for="file">choisissez-le</label></p>
+        </div>
+        <div class="field"><label for="ex-select">Ou un exemple</label>
+          <select id="ex-select">
+            <option value="simulation_recommande.csv">Simulation du montage recommandé</option>
+            <option value="essai_2.csv">Essai 2 de la v1 (capteur en paroi)</option>
+            <option value="essai_1.csv">Essai 1 de la v1 (capteur en paroi)</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="field"><label for="an-power">Puissance P (W)</label><input type="number" id="an-power" step="0.001" min="0"></div>
+          <div class="field"><label for="an-length">Longueur L (m)</label><input type="number" id="an-length" step="0.001" min="0"></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label for="an-tmin">Fenêtre début (s)</label><input type="number" id="an-tmin" step="1" min="0"></div>
+          <div class="field"><label for="an-tmax">Fenêtre fin (s)</label><input type="number" id="an-tmax" step="1" min="0"></div>
+        </div>
+        <p class="caption">Les lignes <code># power=… length=…</code> en tête de fichier remplissent P et L automatiquement.</p>
+        <p class="err" id="an-err" hidden></p>
+      </div>
+      <div class="sim-out">
+        <p class="caption" id="an-source"></p>
+        <div class="stats" id="an-stats"></div>
+        <div class="chips" id="an-chips"></div>
+        <figure class="panel"><h3>Température en fonction de ln t</h3><div id="chart-an"></div></figure>
+        <figure class="panel"><h3>Écart à la droite (résidus)</h3><div id="chart-an-res"></div>
+          <figcaption class="caption">Dans la fenêtre, les résidus doivent rester petits et sans forme. Une courbure en U signale une fenêtre mal placée.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ RÉSULTATS v1 -->
+<section class="block gutter" id="resultats">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Réanalyse des essais v1</p>
+      <h2>Les deux essais Protech ne permettent pas de conclure</h2>
+      <p>Les mesures du tableur <code>Protech.ods</code> ont été extraites et réanalysées avec les trois méthodes. Selon la méthode, on obtient de 0,6 à 1,9 W/m/K : l'écart entre méthodes dépasse de loin les incertitudes statistiques.</p>
+    </div>
+    <div class="table-scroll">
+      <table class="data" id="v1-table"></table>
+    </div>
+    <p class="caption" style="margin-top:8px">Conductivité en W/m/K, ± un écart-type statistique. Calculs faits par le package Python (<code>scripts/build_site_data.py</code>).</p>
+
+    <div class="charts-2" style="margin-top:28px">
+      <figure class="panel"><h3 id="v1-title-0"></h3><div id="chart-v1-0"></div></figure>
+      <figure class="panel"><h3 id="v1-title-1"></h3><div id="chart-v1-1"></div></figure>
+    </div>
+
+    <div class="cols" style="margin-top:36px">
+      <div class="prose">
+        <h3>Ce qui ne colle pas</h3>
+        <ul id="v1-findings"></ul>
+      </div>
+      <div class="prose">
+        <h3>Les bugs du code d'origine</h3>
+        <ul>
+          <li><b>Firmware :</b> débordement de tampon après 16,7 min (<code>char buffer[7]</code> pour <code>millis()</code>) et <code>strcat(dataStr, 0)</code> sur un pointeur nul.</li>
+          <li><b>Firmware :</b> deux lignes par mesure. Une fois sur deux, Processing lit le temps comme si c'était la résistance.</li>
+          <li><b>Processing :</b> la table n'est jamais créée, et le sketch plante au démarrage.</li>
+          <li><b>Processing :</b> enregistre <code>second()</code> (0–59) au lieu du temps écoulé, et ne sauvegarde que toutes les 1000 mesures.</li>
+          <li><b>Électronique :</b> PT100 en pont avec 10 kΩ sur un ADC 10 bits, soit environ 26 °C par pas.</li>
+        </ul>
+        <p><a href="https://github.com/GuillBla/Protech-Conductivit-thermique-des-poudres/blob/main/docs/audit_v1.md">Audit complet de la v1 ↗</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ À RETENIR -->
+<section class="block gutter" id="retenir">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">À garder en tête</p>
+      <h2>Quatorze règles pour une mesure juste</h2>
+      <p>Chaque règle vient d'un des problèmes rencontrés sur la v1 ou d'un résultat du simulateur.</p>
+    </div>
+    <div class="rules">
+      <div class="rule-group">
+        <h3>Concevoir</h3>
+        <div class="rule"><span class="n">01</span><div><b>Mesurer sur le fil</b><p>Collez la sonde (thermocouple fin ou PT100 film) à mi-hauteur du fil. Sur la paroi du tube, $k$ n'est pas mesurable.</p></div></div>
+        <div class="rule"><span class="n">02</span><div><b>Un fil fin</b><p>Ø 0,1 mm ou moins. Avec un fil plus gros, sa capacité thermique fausse les premières dizaines de secondes.</p></div></div>
+        <div class="rule"><span class="n">03</span><div><b>Un tube large et long</b><p>Rayon assez grand pour que la chaleur n'atteigne pas la paroi pendant l'essai ($R^2/4\alpha$ au-delà de la durée), et longueur d'au moins 4 diamètres.</p></div></div>
+        <div class="rule"><span class="n">04</span><div><b>Une puissance modérée</b><p>Visez une pente de 1 à 2 K par unité de ln t, soit $q \approx 4\pi k$ à $8\pi k$. La v1 envoyait 92 W/m : plusieurs centaines de degrés au fil.</p></div></div>
+        <div class="rule"><span class="n">05</span><div><b>Une électronique précise</b><p>MAX31865 (≈ 0,03 °C) ou pont 1 kΩ avec la référence 1,1 V. La résolution doit être petite devant l'échauffement.</p></div></div>
+      </div>
+      <div class="rule-group">
+        <h3>Mesurer</h3>
+        <div class="rule"><span class="n">06</span><div><b>Connaître t = 0</b><p>La chauffe est commandée par l'Arduino (MOSFET) et la colonne <code>heater</code> date le démarrage à l'échantillon près.</p></div></div>
+        <div class="rule"><span class="n">07</span><div><b>Échantillonner vite</b><p>1 Hz au moins : la fenêtre utile va de 10 à 300 s environ. Une mesure par minute ne laisse que 5 points.</p></div></div>
+        <div class="rule"><span class="n">08</span><div><b>U et I aux bornes du fil seul</b><p>Mesurez en 4 fils. Les pertes dans les câbles et connexions faussent $q$ directement.</p></div></div>
+        <div class="rule"><span class="n">09</span><div><b>Un échantillon reproductible</b><p>Notez la masse et la hauteur de poudre, et tassez toujours de la même façon. C'est souvent la plus grande source d'écart (5 à 10 %).</p></div></div>
+        <div class="rule"><span class="n">10</span><div><b>Partir de l'équilibre</b><p>30 s de ligne de base stable, et environ 10 fois la durée de chauffe d'attente entre deux essais.</p></div></div>
+      </div>
+      <div class="rule-group">
+        <h3>Analyser</h3>
+        <div class="rule"><span class="n">11</span><div><b>ln, pas log10</b><p>$k = q/(4\pi \cdot \text{pente})$ avec la pente en fonction de $\ln t$. Sinon, multipliez par 2,303.</p></div></div>
+        <div class="rule"><span class="n">12</span><div><b>Vérifier la droite</b><p>R² > 0,999 et résidus sans forme dans la fenêtre. Une courbure vers le haut aux temps longs signifie que la paroi est atteinte.</p></div></div>
+        <div class="rule"><span class="n">13</span><div><b>Croiser les méthodes</b><p>La pente et le modèle complet doivent donner le même $k$. Des corrélations proches de ±1 signalent des paramètres indissociables.</p></div></div>
+        <div class="rule"><span class="n">14</span><div><b>Étalonner et répéter</b><p>Validez le montage sur un matériau connu (eau gélifiée à l'agar : 0,60 W/m/K ; glycérine : 0,29), puis faites 3 essais par échantillon.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ MATÉRIEL -->
+<section class="block gutter" id="materiel">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Matériel</p>
+      <h2>Le montage v2</h2>
+      <p>Une carte Arduino lit la sonde, commande la chauffe et envoie une ligne CSV par seconde. Un script Python enregistre et analyse les mesures.</p>
+    </div>
+    <div class="cols">
+      <div class="prose">
+        <h3>Liste du matériel</h3>
+        <div class="table-scroll">
+          <table class="data text">
+            <tbody>
+              <tr><td>Carte</td><td >Arduino Uno ou Nano</td></tr>
+              <tr><td>Sonde</td><td >PT100 film 3 fils, ou thermocouple K Ø 0,08 mm</td></tr>
+              <tr><td>Convertisseur</td><td >MAX31865 (PT100) ou MAX31856 (thermocouple)</td></tr>
+              <tr><td>Fil chauffant</td><td >nichrome Ø 0,1 mm, 200 mm (≈ 28 Ω)</td></tr>
+              <tr><td>Commutation</td><td >MOSFET logic level (IRLZ44N), 220 Ω + 10 kΩ</td></tr>
+              <tr><td>Alimentation</td><td >laboratoire, stabilisée (≈ 0,17 A sous 4,7 V pour 0,8 W)</td></tr>
+              <tr><td>Tube</td><td >PVC ou verre, Ø int. ≥ 50 mm, longueur ≥ 200 mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="prose">
+        <h3>Résolution des chaînes de mesure</h3>
+        <div class="table-scroll">
+          <table class="data">
+            <thead><tr><th>Chaîne</th><th>Résolution</th><th>Auto-échauffement</th></tr></thead>
+            <tbody>
+              <tr><td>Pont 10 kΩ, réf. 5 V (v1)</td><td>≈ 26 °C</td><td>0,03 mW</td></tr>
+              <tr><td>Pont 1 kΩ, réf. 1,1 V, 64 lectures</td><td>≈ 0,09 °C</td><td>≈ 0 en impulsions</td></tr>
+              <tr class="hl"><td>MAX31865</td><td>≈ 0,03 °C</td><td>1,5 mW</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Chaîne logicielle</h3>
+        <ol>
+          <li><code>python -m hotwire design</code> : dimensionner l'essai.</li>
+          <li><code>python -m hotwire acquire --port COM3</code> : enregistrer (ou <code>--simulate</code> sans carte).</li>
+          <li><code>python -m hotwire analyze mesure.csv --method all</code> : calculer $k$.</li>
+        </ol>
+        <p><a href="https://github.com/GuillBla/Protech-Conductivit-thermique-des-poudres/blob/main/docs/materiel.md">Câblage détaillé ↗</a> · <a href="https://github.com/GuillBla/Protech-Conductivit-thermique-des-poudres/blob/main/docs/protocole.md">Protocole ↗</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer gutter">
+  <div class="container">
+    <span>Projet Protech · conductivité thermique des poudres · méthode du fil chaud</span>
+    <span>Références : Carslaw &amp; Jaeger (1959) · ASTM D5334 · ISO 8894-1 · IEC 60751</span>
+  </div>
+</footer>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# Montage recommandé (voir docs/protocole.md) : fil fin, tube plus large et plus long,
+# capteur au contact du fil, puissance modérée, essai court échantillonné à 1 Hz.
+
+[geometrie]
+wire_radius    = 0.05e-3   # fil Ø 0,1 mm (nichrome ou constantan)
+powder_radius  = 25e-3     # tube Ø intérieur 50 mm
+tube_thickness = 2e-3
+length         = 0.20      # 200 mm de fil dans la poudre (L/D = 4)
+
+[poudre]
+k_powder     = 0.20
+rhocp_powder = 1.2e6
+
+[tube]
+k_tube     = 0.19          # PVC
+rhocp_tube = 1.9e6
+
+[fil]
+rhocp_wire = 3.8e6
+
+[conditions]
+power     = 0.8            # W -> q = 4 W/m, pente ≈ 1,6 K par unité de ln(t) si k = 0,2
+h_ext     = 10.0
+t_ambient = 20.0
+
+[capteur]
+sensor = "wire"            # thermocouple fin / sonde collé(e) à mi-hauteur du fil
