@@ -305,7 +305,7 @@
     <div class="rules">
       <div class="rule-group">
         <h3>Concevoir</h3>
-        <div class="rule"><span class="n">01</span><div><b>Mesurer sur le fil</b><p>Collez la sonde (thermocouple fin ou PT100 film) à mi-hauteur du fil. Sur la paroi du tube, $k$ n'est pas mesurable.</p></div></div>
+        <div class="rule"><span class="n">01</span><div><b>Mesurer sur le fil, isolé électriquement</b><p>Collez une PT100 film à mi-hauteur du fil, avec un tour de ruban Kapton entre les deux : le fil est nu et sous tension. Sur la paroi du tube, $k$ n'est pas mesurable. <a href="#sonde">Comment faire</a></p></div></div>
         <div class="rule"><span class="n">02</span><div><b>Un fil fin</b><p>Kanthal A1 Ø 0,1 mm ou moins. Avec un fil plus gros, sa capacité thermique fausse les premières dizaines de secondes. Le Kanthal garde une résistance stable en chauffant : la puissance reste constante.</p></div></div>
         <div class="rule"><span class="n">03</span><div><b>Un tube large et long</b><p>Rayon assez grand pour que la chaleur n'atteigne pas la paroi pendant l'essai ($R^2/4\alpha$ au-delà de la durée), et longueur d'au moins 4 diamètres.</p></div></div>
         <div class="rule"><span class="n">04</span><div><b>Une puissance modérée</b><p>Visez une pente de 1 à 2 K par unité de ln t, soit $q \approx 4\pi k$ à $8\pi k$. La v1 envoyait 92 W/m : plusieurs centaines de degrés au fil.</p></div></div>
@@ -374,6 +374,57 @@
           <li><code>python -m hotwire analyze mesure.csv --method all</code> : calculer $k$.</li>
         </ol>
         <p><a href="https://github.com/GuillBla/Protech-Conductivit-thermique-des-poudres/blob/main/docs/materiel.md">Câblage détaillé ↗</a> · <a href="https://github.com/GuillBla/Protech-Conductivit-thermique-des-poudres/blob/main/docs/protocole.md">Protocole ↗</a></p>
+      </div>
+    </div>
+
+    <div class="probe" id="sonde">
+      <div class="prose">
+        <h3>Fixer la sonde sur le fil</h3>
+        <p>Le fil chauffant est nu et sous tension. Si la sonde le touche directement, le courant de chauffe peut passer dans le MAX31865 et l'Arduino. Un thermocouple soudé sur le fil capterait en plus la chute de tension le long du fil. On intercale donc une couche isolante très fine : elle bloque le courant mais laisse passer la chaleur.</p>
+      </div>
+      <figure class="panel">
+        <div class="table-scroll">
+          <svg class="probe-svg" viewBox="0 0 600 205" role="img" aria-labelledby="probe-title">
+            <title id="probe-title">Vue de côté : le fil chauffant entouré d'un tour de ruban Kapton, la PT100 film posée dessus et maintenue par une goutte d'époxy, ses fils remontant le long du fil chauffant.</title>
+            <line class="p-wire" x1="20" y1="150" x2="580" y2="150"/>
+            <rect class="p-kapton" x="225" y="140" width="150" height="20" rx="3"/>
+            <path class="p-epoxy" d="M210 140 C 215 92, 385 92, 390 140 Z"/>
+            <rect class="p-sensor" x="250" y="118" width="100" height="20" rx="2"/>
+            <path class="p-lead" d="M262 118 C 262 88, 150 80, 120 40"/>
+            <path class="p-lead" d="M338 118 C 338 92, 160 84, 130 40"/>
+            <path class="p-lead" d="M300 118 C 300 90, 155 82, 125 40"/>
+            <text class="p-label" x="20" y="182">fil Kanthal Ø 0,1 mm (sous tension)</text>
+            <line class="p-tick" x1="40" y1="150" x2="40" y2="168"/>
+            <text class="p-label" x="400" y="196">1 tour de Kapton 25 µm</text>
+            <line class="p-tick" x1="360" y1="160" x2="400" y2="186"/>
+            <text class="p-label" x="410" y="58">PT100 film 2 × 5 mm<tspan x="410" dy="16">face sensible vers le fil</tspan></text>
+            <line class="p-tick" x1="346" y1="120" x2="406" y2="72"/>
+            <text class="p-label" x="412" y="126">goutte d'époxy</text>
+            <line class="p-tick" x1="386" y1="130" x2="408" y2="122"/>
+            <text class="p-label" x="140" y="30">vers le MAX31865</text>
+          </svg>
+        </div>
+        <figcaption class="caption">Vue de côté, pas à l'échelle. La sonde est posée parallèlement au fil, à mi-hauteur de la poudre.</figcaption>
+      </figure>
+      <div class="cols">
+        <div class="prose">
+          <h3>Montage</h3>
+          <ol>
+            <li>Couper l'alimentation de chauffe et dégraisser le fil à l'alcool.</li>
+            <li>Enrouler un tour de ruban polyimide (Kapton) de 25 µm, sur 5 à 8 mm de large, à mi-hauteur de la longueur chauffée.</li>
+            <li>Poser la PT100 film sur le Kapton, face sensible vers le fil, parallèle au fil.</li>
+            <li>La fixer avec une petite goutte d'époxy thermoconductrice et laisser durcir. Utiliser le moins de colle possible : elle ajoute de la masse à chauffer.</li>
+            <li>Faire remonter les fils de la sonde le long du fil chauffant jusqu'en haut du tube, sans tirer sur la sonde.</li>
+          </ol>
+        </div>
+        <div class="prose">
+          <h3>Vérifications</h3>
+          <ul>
+            <li><b>Isolement</b> : à l'ohmmètre, plus de 10 MΩ entre le fil chauffant et chacun des fils de la sonde. À refaire après chaque remplissage du tube.</li>
+            <li><b>Température</b> : le Kapton tient 400 °C, une époxy courante environ 150 °C. Avec 4 W/m, le fil ne dépasse pas 40 °C. Avec les 92 W/m de la v1, il aurait atteint 400 °C : colle et sonde n'auraient pas tenu.</li>
+            <li><b>Effet sur le résultat</b> : la couche isolante et la colle décalent la courbe de quelques dixièmes de degré, sans changer la pente en ln t, donc sans changer $k$. Elles retardent un peu la réponse : commencez la fenêtre d'analyse après 10 à 20 s.</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

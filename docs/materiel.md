@@ -49,6 +49,50 @@ sur l'essai. Pour $k \approx 0{,}2$ W/m/K, cela fait $q \approx 3$ à 5 W/m.
 > d'oxydation et de brûlure, et la convection dans la poudre fausse alors la
 > mesure.
 
+## Fixer la sonde sur le fil
+
+Le fil chauffant est nu et sous tension. Si la sonde le touche directement,
+le courant de chauffe peut passer dans le MAX31865 et l'Arduino. Un
+thermocouple soudé sur le fil capterait en plus la chute de tension le long
+du fil. On intercale donc une couche isolante très fine : elle bloque le
+courant mais laisse passer la chaleur.
+
+```
+          vers le MAX31865
+                ╲╲╲
+            ╭───────────╮   ← goutte d'époxy thermoconductrice
+            │ ▓▓ PT100 ▓▓│   ← PT100 film 2 × 5 mm, face sensible vers le fil
+ ═══════════░░░░░░░░░░░░░═══════════   ← fil Kanthal Ø 0,1 mm (sous tension)
+            ↑ 1 tour de Kapton 25 µm
+```
+
+1. Couper l'alimentation de chauffe et dégraisser le fil à l'alcool.
+2. Enrouler un tour de ruban polyimide (Kapton) de 25 µm, sur 5 à 8 mm de
+   large, à mi-hauteur de la longueur chauffée.
+3. Poser la PT100 film sur le Kapton, face sensible vers le fil, parallèle au fil.
+4. La fixer avec une petite goutte d'époxy thermoconductrice et laisser durcir.
+   Utiliser le moins de colle possible : elle ajoute de la masse à chauffer.
+5. Faire remonter les fils de la sonde le long du fil chauffant jusqu'en haut
+   du tube, sans tirer sur la sonde.
+
+Vérifications :
+
+* **Isolement** : à l'ohmmètre, plus de 10 MΩ entre le fil chauffant et chacun
+  des fils de la sonde. À refaire après chaque remplissage du tube.
+* **Température** : le Kapton tient 400 °C, une époxy courante environ
+  150 °C. Avec 4 W/m, le fil ne dépasse pas 40 °C. Avec les 92 W/m de la v1,
+  il aurait atteint 400 °C.
+* **Effet sur le résultat** : la couche isolante et la colle décalent la courbe
+  de quelques dixièmes de degré, sans changer la pente en ln t, donc sans
+  changer $k$. Elles retardent un peu la réponse : commencer la fenêtre
+  d'analyse après 10 à 20 s.
+
+Si le montage doit être souvent manipulé, une sonde-aiguille est plus
+robuste : le fil et la sonde sont glissés dans une aiguille inox de Ø 1 à
+2 mm remplie d'époxy (norme ASTM D5334). L'aiguille étant plus grosse, il
+faut alors un essai plus long et l'analyse par le modèle complet
+(`--method model`).
+
 ## Câblage — option A : MAX31865 (recommandé)
 
 ```
