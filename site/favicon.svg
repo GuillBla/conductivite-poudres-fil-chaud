@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Coupe du tube vue de dessus : paroi, poudre chauffée, fil au centre -->
+  <defs>
+    <radialGradient id="heat" cx="32" cy="32" r="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffd0a8"/>
+      <stop offset="0.22" stop-color="#ff8a3d"/>
+      <stop offset="0.6" stop-color="#c2410c" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#c2410c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#14201f"/>
+  <circle cx="32" cy="32" r="20" fill="url(#heat)"/>
+  <circle cx="32" cy="32" r="22" fill="none" stroke="#a9bfba" stroke-width="4.5"/>
+  <circle cx="32" cy="32" r="3.6" fill="#fff6ec"/>
+</svg>
