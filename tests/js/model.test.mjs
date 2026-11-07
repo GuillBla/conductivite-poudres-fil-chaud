@@ -1,5 +1,5 @@
 // Vérifie que le portage JavaScript (site/js/model.js) reproduit le modèle Python.
-// Lancer :  node --test tests/js/
+// Lancer :  node --test tests/js/*.test.mjs
 // Les valeurs de référence sont produites par scripts/build_site_data.py.
 import { test } from "node:test";
 import assert from "node:assert/strict";

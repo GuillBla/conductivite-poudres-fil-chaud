@@ -24,7 +24,7 @@ Cette version 2 apporte :
 | 🤖 **Arduino virtuel** | produit exactement les mêmes trames que le firmware, avec quantification et bruit du capteur : toute la chaîne se teste **sans matériel** |
 | 📈 **Analyse** | trois méthodes (pente en ln t, ajustement E1, problème inverse sur le modèle complet), avec incertitudes |
 | 🔌 **Firmware v2** | MAX31865 ou pont diviseur amélioré, commande de la chauffe, sécurités, échantillonnage sans dérive |
-| ✅ **Tests** | 16 tests Python (`pytest`) et 7 tests JavaScript (`node --test tests/js/`) |
+| ✅ **Tests** | 16 tests Python (`pytest`) et 7 tests JavaScript (`node --test tests/js/*.test.mjs`) |
 
 ## Démarrage rapide
 
@@ -103,7 +103,7 @@ réanalyse des essais v1.
   `site/` à chaque push sur `main`.
 * **Mettre à jour les résultats** : `python scripts/build_site_data.py`
   régénère `site/data/results.json` à partir du package Python.
-* **Cohérence Python ↔ JavaScript** : `node --test tests/js/` vérifie que le
+* **Cohérence Python ↔ JavaScript** : `node --test tests/js/*.test.mjs` vérifie que le
   simulateur du site reproduit le modèle Python à 10⁻⁶ près.
 
 ## Organisation du dépôt

@@ -1,6 +1,8 @@
 """Tests : modèle physique, capteurs, méthodes d'analyse et chaîne complète
 (Arduino virtuel -> acquisition -> analyse)."""
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -116,7 +118,7 @@ def test_virtual_arduino_end_to_end(tmp_path):
 
 
 def test_load_legacy_data():
-    m = analysis.load_measurement("data/essai_2.csv", conversion="legacy")
+    m = analysis.load_measurement(Path(__file__).parent.parent / "data" / "essai_2.csv", conversion="legacy")
     assert m.metadata["power"] == "3.77"
     assert m.temperature[0] == pytest.approx(18.67007673, abs=1e-6)  # valeur du tableur
 
